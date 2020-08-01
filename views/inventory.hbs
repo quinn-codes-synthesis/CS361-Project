@@ -1,18 +1,3 @@
-{{!-- Navbar --}}
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <a class="navbar-brand" href="/">Apple Cart</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-        <div class="navbar-nav">
-            <a class="nav-item nav-link" href="/">Home</a>
-            <a class="nav-item nav-link" href="product_catalog">Product Catalog</a>
-            <a class="nav-item nav-link active" href="inventory">Manage Inventory<span class="sr-only">(current)</span></a>
-        </div>
-    </div>
-</nav>
-
 {{!-- Content --}}
 <div class="mt-4 container-fluid">
 
@@ -21,6 +6,8 @@
     <div class="col">
         <h1 class="display-4 text-left">Inventory</h1>
         <p class="text-left">Low Shelf Inventory appears in<span class="text-danger"> red</span>.</p>
+        <p class="text-left">Inactive items appears in<span class="text-secondary"> gray</span>.</p>
+        <p class="text-left">Users can click on the row to adjust shelf thresholds.</p>
     </div>
   </div>
 
@@ -35,8 +22,8 @@
                   <div class="col">
                       <label for="product_name_input">Product Name</label>
                       <select class="form-control" id="product_name_input" name="product_name_input">
-                          {{#each this}}
-                          {{#if name}}
+                          {{#each results}}
+                          {{#if active}}
                           <option>{{name}}</option>
                           {{/if}}
                           {{/each}}
@@ -76,7 +63,7 @@
                   <div class="col">
                       <label for="product_name_input">Product Name</label>
                       <select class="form-control" id="product_name_input" name="product_name_input">
-                          {{#each this}}
+                          {{#each results}}
                           {{#if name}}
                           <option>{{name}}</option>
                           {{/if}}
@@ -112,7 +99,7 @@
       <thead class="thead-dark">
         <tr>
             <th class="text-center" scope="col" colspan="4">Product</th>
-            <th class="text-center bg-secondary" scope="col" colspan="4">Inventory</th>
+            <th class="text-center bg-secondary" scope="col" colspan="6">Inventory</th>
         </tr>
         <tr>
             <th class="text-center" scope="col">ID</th>
@@ -120,31 +107,57 @@
             <th class="text-center" scope="col">Quantity</th>
             <th class="text-center" scope="col">Expiration Date</th>
             <th class="text-center bg-secondary" scope="col">Warehouse</th>
+            <th class="text-center bg-secondary" scope="col">Warehouse Minimum Threshold</th>
+            <th class="text-center bg-secondary" scope="col">Warehouse Capacity</th>
             <th class="text-center bg-secondary" scope="col">Shelf</th>
             <th class="text-center bg-secondary" scope="col">Minimum Shelf Threshold</th>
             <th class="text-center bg-secondary" scope="col">Shelf Capacity</th>
         </tr>
       </thead>
       <tbody>
-        {{#each this}}
+        {{#each results}}
           {{#if name}}
-            <tr>
-              <td class="text-center">{{id}}</td>
+            {{#if not_catalog}}
+            <tr class="gt_product">
+              <td class="text-center bg-secondary gt_shelf_id">{{id}}</td>
+              <td class="text-center bg-secondary">{{name}}</td>
+              <td class="text-center bg-secondary">{{total_quantity}}</td>
+              <td class="text-center bg-secondary">{{exp_date}}</td>
+              <td class="text-center bg-secondary">{{wh_quantity}}</td>
+              <td class="text-center bg-secondary">{{wh_min_threshold}}</td>
+              <td class="text-center bg-secondary">{{wh_max_threshold}}</td>
+              <td class="text-center bg-secondary">{{shelf_quantity}}</td>
+              <td class="text-center bg-secondary gt_shelf_min_threshold">{{shelf_min_threshold}}</td>
+              <td class="text-center bg-secondary gt_shelf_max_threshold">{{shelf_max_threshold}}</td>
+            </tr>
+            {{else}}
+            <tr class="gt_product">
+              <td class="text-center gt_shelf_id">{{id}}</td>
               <td class="text-center">{{name}}</td>
               <td class="text-center">{{total_quantity}}</td>
               <td class="text-center">{{exp_date}}</td>
+              {{#if wh_low}}
+              <td class="text-center text-white bg-danger">{{wh_quantity}}</td>
+              {{else}}
               <td class="text-center">{{wh_quantity}}</td>
+              {{/if}}
+              <td class="text-center">{{wh_min_threshold}}</td>
+              <td class="text-center">{{wh_max_threshold}}</td>
               {{#if shelf_low}}
               <td class="text-center text-white bg-danger">{{shelf_quantity}}</td>
               {{else}}
               <td class="text-center">{{shelf_quantity}}</td>
               {{/if}}
-              <td class="text-center">{{shelf_min_threshold}}</td>
-              <td class="text-center">{{shelf_max_threshold}}</td>
+              <td class="text-center gt_shelf_min_threshold">{{shelf_min_threshold}}</td>
+              <td class="text-center gt_shelf_max_threshold">{{shelf_max_threshold}}</td>
             </tr>
+            {{/if}}
           {{/if}}
         {{/each}}
       <tbody>
     </table>
   </div>
 </div>
+
+{{!-- Modal (Popup To Edit Shelves Thresholds) --}}
+{{> shelves_edit_modal}}
