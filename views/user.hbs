@@ -1,0 +1,93 @@
+<div class="mt-4 container-fluid">
+
+    {{!-- User Management Forms --}}
+    <div class="row">
+        <div class="col">
+        <h3 class="display-4 text-left">Current Users</h3>
+        {{!-- Add User Form --}}
+        <form action="/user/new_user" method="post">
+            <div class="form-row">
+
+            <div class="col">
+                <label for="fist_name_input">First Name</label>
+                <input type="text" class="form-control" id="fist_name_input" name="fist_name_input" placeholder="first name" required>
+            </div>
+
+            <div class="col">
+                <label for="last_name_input">Last Name</label>
+                <input type="text" class="form-control" id="last_name_input" name="last_name_input" placeholder="last name" required>
+            </div>
+
+            <div class="col">
+                <label for="email_input">Email</label>
+                <input type="email" class="form-control" id="email_input" name="email_input" placeholder="email" required>
+            </div>
+                        
+            <div class="col">
+                <label for="username_input">Username</label>
+                <input type="text" class="form-control" id="username_input" name="username_input" placeholder="username" required>
+            </div>
+
+            <div class="col">
+                <label for="password_input">Password</label>
+                <input type="text" class="form-control" id="password_input" name="password_input" placeholder="password" required>
+            </div>
+
+            <div class="col">
+                <label>&nbsp;</label>
+                <div class="form-row">
+                <div class="col"><button type="submit" class="btn btn-primary" id="create_user_submit">Create User</button></div>
+                </div>
+            </div>
+
+            </div>
+        </form>
+
+        {{!-- Remove User Form --}}
+        <form action="/user/remove_user" method="post">
+            <div class="form-row">
+
+            <div class="col">
+                <label for="user_id_input">Id</label>
+                <select class="form-control" id="user_id_input" name="user_id_input">
+                {{#each sqlResults}}
+                <option>{{id}} - {{first_name}} {{last_name}}</option>
+                {{!-- <option>{{id}} - {{first_name}} {{last_name}}</option> --}}
+                {{/each}}
+                </select>
+            </div>
+
+            <div class="col">
+                <label>&nbsp;</label>
+                <div class="form-row">
+                    <div class="col"><button type="submit" class="btn btn-primary " id="rem_user_submit">Remove User</button></div>
+                </div>
+            </div>
+
+            </div>
+        </form>
+        </div>
+    </div>
+
+    {{!-- Table --}}
+    <div class="row mt-5">
+        <table class="table table-hover">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-center" scope="col">Id</th>
+                <th class="text-center" scope="col">First Name</th>
+                <th class="text-center" scope="col">Last Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each sqlResults}}
+            <tr>
+                <th class="text-center" scope="row">{{this.id}}</th>
+                <td class="text-center">{{this.first_name}}</td>
+                <td class="text-center">{{this.last_name}}</td>
+            </tr>
+            {{/each}}
+        <tbody>
+        </table>
+    </div>
+</div>
