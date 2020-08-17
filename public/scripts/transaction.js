@@ -12,6 +12,7 @@ const basketTable = document.querySelector('#gt_products_in_basket_table tbody')
 const checkoutButton = document.querySelector('#gt_checkout_button')
 const clearButton = document.querySelector('#gt_clear_button')
 const errorMessageText = document.querySelector('#gt_transaction_error_message')
+const returnButton = document.querySelector('#gt_return_button')
 
 // Save the created basket in an object for easy access later
 let basket = {  
@@ -33,6 +34,9 @@ window.addEventListener("load", function() {
         emptyBasket()
         clearBasketTable()
         clearTotals()
+    })
+    returnButton.addEventListener("click", function () {
+        returnItem()
     })
 })
 
@@ -145,6 +149,31 @@ function productTableBuilder() {
                         tr.appendChild(qty)
                         tr.appendChild(unit_price)
                         tr.appendChild(total)
+
+                        // add an event listener to the row so it can be clicked on to remove an item
+                        tr.addEventListener('click', function() {
+                            if (basket.items[element.id]['quantity'] > 1) {
+                                basket.items[element.id]['quantity'] -= 1;
+                                basket.items[element.id]["total"] = basket.items[element.id]["quantity"] * basket.items[element.id]["unit_price"];
+                                thisQuantity = document.querySelector("#gt_" + element.id + "_quantity")
+                                thisQuantity.innerText = basket.items[element.id]["quantity"]
+                                thisPrice = document.querySelector("#gt_" + element.id + "_total")
+                                thisPrice.innerText = parseMoney(basket.items[element.id]["total"])
+                                basket.items[element.id]["shelf_quantity"] += 1; 
+                                updateTotals()
+                            } else {
+                                basket.items[element.id]['quantity'] -= 1;
+                                basket.items[element.id]["total"] = basket.items[element.id]["quantity"] * basket.items[element.id]["unit_price"];
+                                thisQuantity = document.querySelector("#gt_" + element.id + "_quantity")
+                                thisQuantity.innerText = basket.items[element.id]["quantity"]
+                                thisPrice = document.querySelector("#gt_" + element.id + "_total")
+                                thisPrice.innerText = parseMoney(basket.items[element.id]["total"])
+                                basket.items[element.id]["shelf_quantity"] += 1; 
+                                updateTotals()
+                                basketTable.removeChild(tr)
+                                delete basket.items[element.id]
+                            }
+                        })
                         basketTable.appendChild(tr)
                         basket.items[element.id] = item
                         updateTotals()
@@ -286,4 +315,12 @@ function emptyBasket() {
         userId: thisUserId,
         empty: true    
     }
+}
+
+function returnItem() {
+    let returnDiv = document.getElementById("returnDIV");
+    let product_name = req.body.product_name_input;
+    let quantity = req.body.quantity_input;
+
+    returnDiv.innerHTML = "Successfully returned " + quantity + " " + product_name + "(s)."
 }
